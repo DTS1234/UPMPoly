@@ -35,11 +35,11 @@ public class Faculty {
         this.ownerNumber = ownerNumber;
     }
 
-    public Faculty deserialize(final byte[] jsonFaculty) {
+    public static Faculty deserialize(final byte[] jsonFaculty) {
         return deserialize(new String(jsonFaculty, StandardCharsets.UTF_8));
     }
 
-    public Faculty deserialize(String facultyJson) {
+    public static Faculty deserialize(String facultyJson) {
         JSONObject jsonObject = new JSONObject(facultyJson);
         Map<String, Object> map = jsonObject.toMap();
         final String name = (String) map.get("name");

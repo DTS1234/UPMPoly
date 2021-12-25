@@ -90,7 +90,7 @@ public class UpmPoly implements ContractInterface {
         context.getStub().putStringState(String.valueOf(facultyId), faculty.serialize());
         // update player balance
         final Player updatedPlayer = new Player(Long.valueOf(playerNumber), player.getName(), playerBalance - faculty.getSalePrice());
-        context.getStub().putStringState(String.valueOf(playerNumber), updatedPlayer.serialize(null));
+        context.getStub().putStringState(String.valueOf(playerNumber), updatedPlayer.serialize());
 
         System.out.println("Faculty with id " + facultyId + " is now owned by player with id : " + playerNumber);
     }
@@ -124,11 +124,11 @@ public class UpmPoly implements ContractInterface {
 
             // eliminate the player
             visitor.setEliminated(true);
-            stub.putStringState(visitorNumber, visitor.serialize(null));
+            stub.putStringState(visitorNumber, visitor.serialize());
             // send rest of the visitor's money to faculty owner
             final Player facultyOwner = readPlayer(context, String.valueOf(ownerNumber));
             final Player updatedOwner = new Player(ownerNumber, facultyOwner.getName(), facultyOwner.getMoney() + visitor.getMoney());
-            stub.putStringState(String.valueOf(ownerNumber), updatedOwner.serialize(null));
+            stub.putStringState(String.valueOf(ownerNumber), updatedOwner.serialize());
 
             throw new ChaincodeException(String.format("Player %s lost ! No more money.", visitor.getPlayerNumber()), Errors.PLAYER_NOT_ENOUGH_MONEY.toString());
         } else {
@@ -138,7 +138,7 @@ public class UpmPoly implements ContractInterface {
                 throw new ChaincodeException(String.format("Player %s is eliminated !", facultyOwner.getPlayerNumber()), Errors.PLAYER_ELIMINATED.toString());
             }
             final Player updatedOwner = new Player(ownerNumber, facultyOwner.getName(), facultyOwner.getMoney() + visitor.getMoney());
-            stub.putStringState(String.valueOf(ownerNumber), updatedOwner.serialize(null));
+            stub.putStringState(String.valueOf(ownerNumber), updatedOwner.serialize());
 
             // update visitor's balance
             final double newVisitorBalance = visitor.getMoney() - faculty.getRentalPrice();
@@ -185,11 +185,11 @@ public class UpmPoly implements ContractInterface {
 
         // update buyer balance
         final Player updatedBuyer = new Player(Long.valueOf(newOwnerId), buyer.getName(), buyer.getMoney() - negotiatedPrice);
-        stub.putStringState(newOwnerId, updatedBuyer.serialize(null));
+        stub.putStringState(newOwnerId, updatedBuyer.serialize());
 
         // update seller balance
         final Player updatedSeller = new Player(faculty.getOwnerNumber(), seller.getName(), seller.getMoney() + negotiatedPrice);
-        stub.putStringState(String.valueOf(faculty.getOwnerNumber()), updatedSeller.serialize(null));
+        stub.putStringState(String.valueOf(faculty.getOwnerNumber()), updatedSeller.serialize());
 
         // update faculty's owner
         final Faculty updatedFaculty = new Faculty(Long.valueOf(facultyId), faculty.getName(), faculty.getRentalPrice(), faculty.getSalePrice());
@@ -208,7 +208,7 @@ public class UpmPoly implements ContractInterface {
             throw new ChaincodeException(errorMessage, Errors.PLAYER_NOT_FOUND.toString());
         }
 
-        return genson.deserialize(assetJSON, Player.class);
+        return new Player().deserialize(assetJSON);
     }
 
     @Transaction(intent = Transaction.TYPE.EVALUATE)
@@ -221,7 +221,7 @@ public class UpmPoly implements ContractInterface {
             throw new ChaincodeException(errorMessage, Errors.FACULTY_NOT_FOUND.toString());
         }
 
-        return genson.deserialize(assetJSON, Faculty.class);
+        return Faculty.deserialize(assetJSON);
     }
 
     @Transaction(intent = Transaction.TYPE.SUBMIT)

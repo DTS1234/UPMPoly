@@ -12,11 +12,11 @@ import java.util.Objects;
 public final class Player {
 
     @Property
-    private final Long playerNumber;
+    private  Long playerNumber;
     @Property
-    private final String name;
+    private  String name;
     @Property
-    private final Double money;
+    private  Double money;
 
     @Property
     private boolean isEliminated;
@@ -32,24 +32,35 @@ public final class Player {
         this.isEliminated = false;
     }
 
-    public String serialize(final String privateProps) {
+    public Player(Long playerNumber, String name, Double money, boolean isEliminated) {
+        this.playerNumber = playerNumber;
+        this.name = name;
+        this.money = money;
+        this.isEliminated = isEliminated;
+    }
+
+    public Player() {
+    }
+
+    public String serialize() {
         Map<String, Object> jsonMap = new HashMap();
         jsonMap.put("playerNumber", playerNumber);
         jsonMap.put("name",  name);
         jsonMap.put("money",  Double.toString(money));
-        if (privateProps != null && privateProps.length() > 0) {
-            jsonMap.put("asset_properties", new JSONObject(privateProps));
-        }
+        jsonMap.put("isEliminated",  Boolean.toString(isEliminated));
         return new JSONObject(jsonMap).toString();
     }
 
     public Player deserialize(final String assetJson) {
         JSONObject json = new JSONObject(assetJson);
         Map<String, Object> map = json.toMap();
-        final Long playerNumberJson = (Long) map.get("playerNumber");
+        final Long playerNumberJson = Long.valueOf((Integer)map.get("playerNumber"));
         final String nameJson = (String) map.get("name");
-        final Double moneyJson = (Double) map.get("money");
-        return new Player(playerNumberJson, nameJson, moneyJson);
+        final Double moneyJson = Double.valueOf((String) map.get("money"));
+        final boolean isEliminatedJson = Boolean.valueOf((String) map.get("isEliminated"));
+        final Player player = new Player(playerNumberJson, nameJson, moneyJson);
+        player.setEliminated(isEliminatedJson);
+        return player;
     }
 
     @Override
