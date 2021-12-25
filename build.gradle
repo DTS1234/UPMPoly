@@ -9,9 +9,7 @@ repositories {
     mavenCentral()
 }
 
-application {
-    mainClass = 'org.hyperledger.fabric.contract.ContractRouter'
-}
+
 
 dependencies {
     implementation 'org.hyperledger.fabric-chaincode-java:fabric-chaincode-shim:2.+'
@@ -38,15 +36,14 @@ test {
     useJUnitPlatform()
 }
 
-mainClassName = 'org.hyperledger.fabric.contract.ContractRouter'
 
-shadowJar {
-    baseName = 'chaincode'
-    version = null
-    classifier = null
-
-    manifest {
-        attributes 'Main-Class': 'org.hyperledger.fabric.contract.ContractRouter'
-    }
-}
-installDist.dependsOn check
+//shadowJar {
+//    baseName = 'chaincode'
+//    version = null
+//    classifier = null
+//
+//    manifest {
+//        attributes 'Main-Class': 'org.hyperledger.fabric.contract.ContractRouter'
+//    }
+//}
+//installDist.dependsOn check
