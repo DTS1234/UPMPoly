@@ -5,12 +5,6 @@ plugins {
 group 'org.example'
 version '1.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
-}
-
-
-
 dependencies {
     implementation 'org.hyperledger.fabric-chaincode-java:fabric-chaincode-shim:2.+'
     implementation 'org.json:json:+'
@@ -23,6 +17,9 @@ dependencies {
 }
 
 repositories {
+
+    mavenCentral()
+
     maven {
         url "https://hyperledger.jfrog.io/hyperledger/fabric-maven"
     }
@@ -36,14 +33,15 @@ test {
     useJUnitPlatform()
 }
 
+mainClassName = 'org.hyperledger.fabric.contract.ContractRouter'
 
-//shadowJar {
-//    baseName = 'chaincode'
-//    version = null
-//    classifier = null
-//
-//    manifest {
-//        attributes 'Main-Class': 'org.hyperledger.fabric.contract.ContractRouter'
-//    }
-//}
-//installDist.dependsOn check
+shadowJar {
+    baseName = 'chaincode'
+    version = null
+    classifier = null
+
+    manifest {
+        attributes 'Main-Class': 'org.hyperledger.fabric.contract.ContractRouter'
+    }
+}
+installDist.dependsOn check
