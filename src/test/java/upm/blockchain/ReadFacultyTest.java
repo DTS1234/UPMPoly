@@ -4,9 +4,6 @@ import org.hyperledger.fabric.contract.Context;
 import org.hyperledger.fabric.shim.ChaincodeStub;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -14,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-class ReadPlayerTest {
+public class ReadFacultyTest {
 
     @Mock
     Context context;
@@ -30,25 +27,26 @@ class ReadPlayerTest {
     }
 
     @Test
-    void readPlayer() {
+    void readFaculty() {
+
         when(context.getStub()).thenReturn(chaincodeStub);
-        when(chaincodeStub.getStringState("1"))
-                .thenReturn(new Player(1L, "name", 20.00).serialize());
+        when(chaincodeStub.getStringState("1")).thenReturn(new Faculty(1L, "name", 20.00, 200.00).serialize());
 
-        Player player = upmPoly.readPlayer(context, "1");
+        Faculty faculty = upmPoly.readFaculty(context, "1");
 
-        assertThat(player).isEqualTo(new Player(1L, "name", 20.00));
+        assertThat(faculty).isEqualTo(new Faculty(1L, "name", 20.00, 200.00));
+        assertThat(faculty.getOwnerNumber()).isNull();
     }
 
     @Test
-    void readPlayer_noPlayers() {
+    void readFaculty_doesNotExist() {
+
         when(context.getStub()).thenReturn(chaincodeStub);
-        when(chaincodeStub.getStringState("1"))
-                .thenReturn("");
+        when(chaincodeStub.getStringState("1")).thenReturn(null);
 
         assertThatThrownBy(() -> {
-            upmPoly.readPlayer(context, "1");
-        }).hasMessage("Player 1 does not exist");
+            upmPoly.readFaculty(context, "1");
+        }).hasMessage("Faculty 1 does not exist");
 
     }
 

@@ -13,13 +13,13 @@ import java.util.Objects;
 public class Faculty {
 
     @Property
-    private final Long facultyId;
+    private Long facultyId;
     @Property
-    private final String name;
+    private String name;
     @Property
-    private final Double rentalPrice;
+    private Double rentalPrice;
     @Property
-    private final Double salePrice;
+    private Double salePrice;
     @Property
     private Long ownerNumber;
 
@@ -31,7 +31,10 @@ public class Faculty {
         ownerNumber = null;
     }
 
-    public void setOwner(Long ownerNumber){
+    public Faculty() {
+    }
+
+    public void setOwner(Long ownerNumber) {
         this.ownerNumber = ownerNumber;
     }
 
@@ -43,18 +46,19 @@ public class Faculty {
         JSONObject jsonObject = new JSONObject(facultyJson);
         Map<String, Object> map = jsonObject.toMap();
         final String name = (String) map.get("name");
-        final Long facultyId = (Long) map.get("facultyId");
-        final Double rentalPrice = (Double) map.get("rentalPrice");
-        final Double salePrice = (Double) map.get("salePrice");
+        final Long facultyId = Long.valueOf((Integer) map.get("facultyId"));
+        final Double rentalPrice = Double.valueOf((String) map.get("rentalPrice"));
+        final Double salePrice = Double.valueOf((String) map.get("salePrice"));
         return new Faculty(facultyId, name, rentalPrice, salePrice);
     }
 
     public String serialize() {
         Map<String, Object> tMap = new HashMap();
         tMap.put("name", name);
-        tMap.put("salePrice",  Double.toString(salePrice));
-        tMap.put("rentalPrice",  Double.toString(rentalPrice));
-        tMap.put("owner",  ownerNumber == null ? "none" : String.valueOf(ownerNumber));
+        tMap.put("facultyId", facultyId);
+        tMap.put("salePrice", Double.toString(salePrice));
+        tMap.put("rentalPrice", Double.toString(rentalPrice));
+        tMap.put("owner", ownerNumber == null ? "none" : String.valueOf(ownerNumber));
         return new JSONObject(tMap).toString();
     }
 

@@ -26,7 +26,6 @@ public class UpmPoly implements ContractInterface {
         PLAYER_ELIMINATED,
         FACULTY_NOT_FOUND,
         FACULTY_ALREADY_OWNED,
-        FACULTY_DISABLED,
         PLAYER_NOT_ENOUGH_MONEY,
         FACULTY_ALREADY_EXISTS,
         FACULTY_NO_OWNER
@@ -85,12 +84,14 @@ public class UpmPoly implements ContractInterface {
             throw new ChaincodeException("Player does not have enough money to buy this faculty!", Errors.PLAYER_NOT_ENOUGH_MONEY.toString());
         }
 
+        ChaincodeStub stub = context.getStub();
+
         // update faculty owner
         faculty.setOwner(Long.valueOf(playerNumber));
-        context.getStub().putStringState(String.valueOf(facultyId), faculty.serialize());
+        stub.putStringState(String.valueOf(facultyId), faculty.serialize());
         // update player balance
         final Player updatedPlayer = new Player(Long.valueOf(playerNumber), player.getName(), playerBalance - faculty.getSalePrice());
-        context.getStub().putStringState(String.valueOf(playerNumber), updatedPlayer.serialize());
+        stub.putStringState(playerNumber, updatedPlayer.serialize());
 
         System.out.println("Faculty with id " + facultyId + " is now owned by player with id : " + playerNumber);
     }
@@ -234,7 +235,7 @@ public class UpmPoly implements ContractInterface {
         }
 
         final Player player = new Player(playerNumber, name, money);
-        final String playerJson = genson.serialize(player);
+        final String playerJson = player.serialize();
         context.getStub().putStringState(String.valueOf(playerNumber), playerJson);
 
         return player;
@@ -250,7 +251,7 @@ public class UpmPoly implements ContractInterface {
         }
 
         Faculty faculty = new Faculty(facultyId, name, rentalPrice, salePrice);
-        final String facultyJson = genson.serialize(faculty);
+        final String facultyJson = faculty.serialize();
         context.getStub().putStringState(String.valueOf(facultyId), facultyJson);
 
         return faculty;
@@ -284,7 +285,7 @@ public class UpmPoly implements ContractInterface {
 
         for (KeyValue result: results) {
             try {
-                Player player = genson.deserialize(result.getStringValue(), Player.class);
+                Player player = new Player().deserialize(result.getStringValue());
                 players.add(player);
             } catch (Exception e) {
                 System.out.println("Tried to read faculty, but we only need players, continue.");
