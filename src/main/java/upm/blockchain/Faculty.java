@@ -49,7 +49,11 @@ public class Faculty {
         final Long facultyId = Long.valueOf((Integer) map.get("facultyId"));
         final Double rentalPrice = Double.valueOf((String) map.get("rentalPrice"));
         final Double salePrice = Double.valueOf((String) map.get("salePrice"));
-        return new Faculty(facultyId, name, rentalPrice, salePrice);
+        final Long owner = (map.get("owner").equals("null") ? null : Long.valueOf((String)map.get("owner")));
+
+        Faculty faculty = new Faculty(facultyId, name, rentalPrice, salePrice);
+        faculty.setOwner(owner);
+        return faculty;
     }
 
     public String serialize() {
@@ -58,7 +62,7 @@ public class Faculty {
         tMap.put("facultyId", facultyId);
         tMap.put("salePrice", Double.toString(salePrice));
         tMap.put("rentalPrice", Double.toString(rentalPrice));
-        tMap.put("owner", ownerNumber == null ? "none" : String.valueOf(ownerNumber));
+        tMap.put("owner", String.valueOf(ownerNumber));
         return new JSONObject(tMap).toString();
     }
 

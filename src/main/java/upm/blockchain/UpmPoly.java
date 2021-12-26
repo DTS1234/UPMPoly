@@ -36,27 +36,17 @@ public class UpmPoly implements ContractInterface {
      */
     @Transaction(intent = Transaction.TYPE.SUBMIT)
     public void init(final Context context) {
-
-        Player(context, 1L, "player 1", 500.00);
-        Player(context, 2L, "player 2", 500.00);
-        Player(context, 3L, "player 3", 500.00);
-        Player(context, 4L, "player 4", 500.00);
-
-        Faculty(context, 1L, "Industrial Engineering", 25.00, 150.00);
-        Faculty(context, 1L, "Mathematics", 30.00, 200.00);
-        Faculty(context, 2L, "Physics", 33.00, 220.00);
-        Faculty(context, 3L, "Economy", 38.00, 250.00);
-        Faculty(context, 4L, "Business", 50.00, 300.00);
-        Faculty(context, 5L, "Mechanics", 65.00, 350.00);
-        Faculty(context, 6L, "Computer Science", 75.00, 375.00);
-        Faculty(context, 7L, "Cyber-security", 90.00, 400.00);
-        Faculty(context, 8L, "Software engineering", 100.00, 425.00);
-        Faculty(context, 9L, "Finance", 125.00, 450.00);
-        Faculty(context, 10L, "Quantitative analysis", 150.00, 500.00);
-        Faculty(context, 11L, "Automatics", 175.00, 525.00);
-        Faculty(context, 12L, "Robotics", 200.00, 550.00);
-        Faculty(context, 13L, "Innovation", 225.00, 600.00);
-        Faculty(context, 14L, "Entrepreneurship", 250.00, 625.00);
+        ChaincodeStub stub = context.getStub();
+        Player(context, String.valueOf(1L), "player 1", String.valueOf(500.00));
+        Player(context, String.valueOf(2L), "player 2", String.valueOf(500.00));
+        Player(context, String.valueOf(3L), "player 3", String.valueOf(500.00));
+        Player(context, String.valueOf(4L), "player 4", String.valueOf(500.00));
+        Faculty(context, String.valueOf(1L), "Industrial Engineering", String.valueOf(25.00), String.valueOf(125.00));
+        Faculty(context, String.valueOf(1L), "Mathematics", String.valueOf(50.00), String.valueOf(150.00));
+        Faculty(context, String.valueOf(2L), "Physics", String.valueOf(75.00), String.valueOf(175.00));
+        Faculty(context, String.valueOf(3L), "Economy", String.valueOf(100.00), String.valueOf(200.00));
+        Faculty(context, String.valueOf(4L), "Business", String.valueOf(125.00), String.valueOf(225.00));
+        Faculty(context, String.valueOf(5L), "Mechanics", String.valueOf(150.00), String.valueOf(250.00));
     }
 
     @Transaction(intent = Transaction.TYPE.SUBMIT)
@@ -226,23 +216,23 @@ public class UpmPoly implements ContractInterface {
     }
 
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public Player Player(final Context context, final Long playerNumber, final String name, final Double money) {
+    public Player Player(final Context context, final String playerNumber, final String name, final String money) {
 
-        if (playerExists(context, playerNumber)) {
+        if (playerExists(context, Long.valueOf(playerNumber))) {
             String errorMessage = String.format("Player %s already exists", playerNumber);
             System.out.println(errorMessage);
             throw new ChaincodeException(errorMessage, Errors.PLAYER_ALREADY_EXISTS.toString());
         }
 
-        final Player player = new Player(playerNumber, name, money);
+        final Player player = new Player(Long.valueOf(playerNumber), name, Double.valueOf(money));
         final String playerJson = player.serialize();
-        context.getStub().putStringState(String.valueOf(playerNumber), playerJson);
+        context.getStub().putStringState(playerNumber, playerJson);
 
         return player;
     }
 
     @Transaction(intent = Transaction.TYPE.SUBMIT)
-    public Faculty Faculty(final Context context, final Long facultyId, final String name, final Double rentalPrice, final Double salePrice) {
+    public Faculty Faculty(final Context context, final String facultyId, final String name, final String rentalPrice, final String salePrice) {
 
         if (facultyExists(context, String.valueOf(facultyId))) {
             String errorMessage = String.format("Faculty %s already exists", facultyId);
@@ -250,9 +240,9 @@ public class UpmPoly implements ContractInterface {
             throw new ChaincodeException(errorMessage, Errors.FACULTY_ALREADY_EXISTS.toString());
         }
 
-        Faculty faculty = new Faculty(facultyId, name, rentalPrice, salePrice);
+        Faculty faculty = new Faculty(Long.valueOf(facultyId), name, Double.valueOf(rentalPrice), Double.valueOf(salePrice));
         final String facultyJson = faculty.serialize();
-        context.getStub().putStringState(String.valueOf(facultyId), facultyJson);
+        context.getStub().putStringState(facultyId, facultyJson);
 
         return faculty;
     }
