@@ -128,13 +128,13 @@ public class UpmPoly implements ContractInterface {
             if (facultyOwner.isEliminated()) {
                 throw new ChaincodeException(String.format("Player %s is eliminated !", facultyOwner.getPlayerNumber()), Errors.PLAYER_ELIMINATED.toString());
             }
-            final Player updatedOwner = new Player(ownerNumber, facultyOwner.getName(), facultyOwner.getMoney() + visitor.getMoney());
+            final Player updatedOwner = new Player(ownerNumber, facultyOwner.getName(), facultyOwner.getMoney() + faculty.getRentalPrice());
             stub.putStringState(String.valueOf(ownerNumber), updatedOwner.serialize());
 
             // update visitor's balance
             final double newVisitorBalance = visitor.getMoney() - faculty.getRentalPrice();
             final Player updatedVisitor = new Player(Long.valueOf(visitorNumber), visitor.getName(), newVisitorBalance);
-            stub.putStringState(visitorNumber, String.valueOf(updatedVisitor));
+            stub.putStringState(visitorNumber, updatedVisitor.serialize());
         }
 
     }
