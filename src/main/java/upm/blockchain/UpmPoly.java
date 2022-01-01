@@ -121,7 +121,6 @@ public class UpmPoly implements ContractInterface {
             final Player updatedOwner = new Player(ownerNumber, facultyOwner.getName(), facultyOwner.getMoney() + visitor.getMoney());
             stub.putStringState(String.valueOf(ownerNumber), updatedOwner.serialize());
 
-            throw new ChaincodeException(String.format("Player %s lost ! No more money.", visitor.getPlayerNumber()), Errors.PLAYER_NOT_ENOUGH_MONEY.toString());
         } else {
             // update faculty owner's balance
             final Player facultyOwner = readPlayer(context, String.valueOf(ownerNumber));
@@ -271,7 +270,7 @@ public class UpmPoly implements ContractInterface {
         // As another example, if you use startKey = 'asset0', endKey = 'asset9' ,
         // then getStateByRange will retrieve asset with keys between asset0 (inclusive) and asset9 (exclusive) in lexical order.
         QueryResultsIterator<KeyValue> results = stub.getStateByRange("", "");
-        List<Player> players = new ArrayList<Player>();
+        List<Player> players = new ArrayList<>();
 
         for (KeyValue result: results) {
             try {
