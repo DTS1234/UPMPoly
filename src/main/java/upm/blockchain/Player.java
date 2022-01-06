@@ -17,7 +17,6 @@ public final class Player {
     private  String name;
     @Property
     private  Double money;
-
     @Property
     private boolean isEliminated;
 
