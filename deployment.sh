@@ -1,4 +1,4 @@
-cd /fabric-samples/test-network
+cd ../fabric-samples/test-network
 ./network.sh up
 ./network.sh createChannel
 
