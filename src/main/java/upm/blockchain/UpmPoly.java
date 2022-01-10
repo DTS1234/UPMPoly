@@ -114,11 +114,23 @@ public class UpmPoly implements ContractInterface {
         if (visitor.getMoney() < faculty.getRentalPrice()) {
 
             // eliminate the player
-            visitor.setEliminated(true);
-            stub.putStringState(visitorNumber, visitor.serialize());
+            Double restOfTheMoney = visitor.getMoney();
+            Player eliminatedVisitor = new Player(visitor.getPlayerNumber(), visitor.getName(), 0.00, true);
+            stub.putStringState(visitorNumber, eliminatedVisitor.serialize());
+            // set free visitors faculties
+            for (int i = 1; i <= 4; i++) {
+                Faculty currentFaculty = readFaculty(context, String.valueOf(i));
+                if (currentFaculty.getOwnerNumber().equals(Long.valueOf(visitorNumber))) {
+                    Faculty eliminatedFaculty = new Faculty(currentFaculty.getFacultyId(), currentFaculty.getName(), 0.00, 0.00);
+                    eliminatedFaculty.setOwnerNumber(eliminatedVisitor.getPlayerNumber());
+                    stub.putStringState(String.valueOf(eliminatedFaculty.getFacultyId()), eliminatedFaculty.serialize());
+                }
+            }
+
+
             // send rest of the visitor's money to faculty owner
             final Player facultyOwner = readPlayer(context, String.valueOf(ownerNumber));
-            final Player updatedOwner = new Player(ownerNumber, facultyOwner.getName(), facultyOwner.getMoney() + visitor.getMoney());
+            final Player updatedOwner = new Player(ownerNumber, facultyOwner.getName(), facultyOwner.getMoney() + restOfTheMoney);
             stub.putStringState(String.valueOf(ownerNumber), updatedOwner.serialize());
 
         } else {
